@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'user',
+    'coursemanagements', 
+    'quiz',
+    'assignment',
+    'rest_registration',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -70,15 +77,45 @@ TEMPLATES = [
 WSGI_APPLICATION = 'authenticationApp.wsgi.application'
 
 
+REST_REGISTRATION = {
+    'REGISTER_VERIFICATION_ENABLED': False,
+    'RESET_PASSWORD_VERIFICATION_ENABLED': False,
+    'REGISTER_EMAIL_VERIFICATION_ENABLED': False,
+}
+
+
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    'default': {},
+    'users': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'authentication_users',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+    },
+    'coursemanagements': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'coursemanagements',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+    },
+    'quizs': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'quiz',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+    },
+    'assignments': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'assignment',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
     }
 }
+
+DATABASE_ROUTERS = ['user.router.AuthRouter', ]
 
 
 # Password validation
@@ -119,7 +156,22 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],  
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'user.UserAccount'
